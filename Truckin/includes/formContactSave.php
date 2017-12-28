@@ -76,17 +76,17 @@ function formContactSave(){
 function saveContact($db_conn){
 	$qry_ct = "insert into contact set ct_type='".$_SESSION['ct_type']."'";
 	if (isset($_SESSION['ct_first_name'])){
-		$qry_ct .= ", ct_first_name='".$_SESSION['ct_first_name']."'";
+		$qry_ct .= ", ct_first_name='".$db_conn->real_escape_string($_SESSION['ct_first_name'])."'";
 	} else {
 		$qry_ct .= ", ct_first_name=''";
 	}
 	if (isset($_SESSION['ct_last_name'])){
-		$qry_ct .= ", ct_last_name='".$_SESSION['ct_last_name']."'";
+		$qry_ct .= ", ct_last_name='".$db_conn->real_escape_string($_SESSION['ct_last_name'])."'";
 	} else {
 		$qry_ct .= ", ct_last_name=''";
 	}
 	if (isset($_SESSION['ct_disp_name'])){
-		$qry_ct .= ", ct_disp_name='".$_SESSION['ct_disp_name']."'";
+		$qry_ct .= ", ct_disp_name='".$db_conn->real_escape_string($_SESSION['ct_disp_name'])."'";
 	} else {
 		$qry_ct .= ", ct_disp_name=''";
 	}
@@ -98,37 +98,37 @@ function saveContact($db_conn){
 		$qry_ad = "insert into contact_address set ad_ct_id='".$id."'";
 		$qry_ad .= ", ad_type='".$_SESSION['ad_type']."'";
 		if (isset($_SESSION['ad_line_1'])){
-			$qry_ad .= ", ad_line_1='".$_SESSION['ad_line_1']."'";
+			$qry_ad .= ", ad_line_1='".$db_conn->real_escape_string($_SESSION['ad_line_1'])."'";
 		} else {
 			$qry_ad .= ", ad_line_1=''";
 		}
 		if (isset($_SESSION['ad_line_2'])){
-			$qry_ad .= ", ad_line_2='".$_SESSION['ad_line_2']."'";
+			$qry_ad .= ", ad_line_2='".$db_conn->real_escape_string($_SESSION['ad_line_2'])."'";
 		} else {
 			$qry_ad .= ", ad_line_2=''";
 		}
 		if (isset($_SESSION['ad_line_3'])){
-			$qry_ad .= ", ad_line_3='".$_SESSION['ad_line_3']."'";
+			$qry_ad .= ", ad_line_3='".$db_conn->real_escape_string($_SESSION['ad_line_3'])."'";
 		} else {
 			$qry_ad .= ", ad_line_3=''";
 		}
 		if (isset($_SESSION['ad_city'])){
-			$qry_ad .= ", ad_city='".$_SESSION['ad_city']."'";
+			$qry_ad .= ", ad_city='".$db_conn->real_escape_string($_SESSION['ad_city'])."'";
 		} else {
 			$qry_ad .= ", ad_city=''";
 		}
 		if (isset($_SESSION['ad_province'])){
-			$qry_ad .= ", ad_province='".$_SESSION['ad_province']."'";
+			$qry_ad .= ", ad_province='".$db_conn->real_escape_string($_SESSION['ad_province'])."'";
 		} else {
 			$qry_ad .= ", ad_province=''";
 		}
 		if (isset($_SESSION['ad_post_code'])){
-			$qry_ad .= ", ad_post_code='".$_SESSION['ad_post_code']."'";
+			$qry_ad .= ", ad_post_code='".$db_conn->real_escape_string($_SESSION['ad_post_code'])."'";
 		} else {
 			$qry_ad .= ", ad_post_code=''";
 		}
 		if (isset($_SESSION['ad_contry'])){
-			$qry_ad .= ", ad_country='".$_SESSION['ad_country']."'";
+			$qry_ad .= ", ad_country='".$db_conn->real_escape_string($_SESSION['ad_country'])."'";
 		} else {
 			$qry_ad .= ", ad_country=''";
 		}
@@ -139,7 +139,7 @@ function saveContact($db_conn){
 		$qry_ph = "insert into contact_phone  set ph_ct_id='".$id."'";
 		$qry_ph .= ", ph_type='".$_SESSION['ph_type']."'";
 		if (isset($_SESSION['ph_number'])){
-			$qry_ph .= ", ph_number='".$_SESSION['ph_number']."'";
+			$qry_ph .= ", ph_number='".$db_conn->real_escape_string($_SESSION['ph_number'])."'";
 		} else {
 			$qry_ph .= ", ph_number=''";
 		}
@@ -150,7 +150,7 @@ function saveContact($db_conn){
 		$qry_em = "insert into contact_email  set em_ct_id='".$id."'";
 		$qry_em .= ", em_type='".$_SESSION['em_type']."'";
 		if (isset($_SESSION['em_email'])){
-			$qry_em .= ", em_email='".$_SESSION['em_email']."'";
+			$qry_em .= ", em_email='".$db_conn->real_escape_string($_SESSION['em_email'])."'";
 		} else {
 			$qry_em .= ", em_email=''";
 		}
@@ -161,7 +161,7 @@ function saveContact($db_conn){
 		$qry_we = "insert into contact_web  set we_ct_id='".$id."'";
 		$qry_we .= ", we_type='".$_SESSION['we_type']."'";
 		if (isset($_SESSION['we_url'])){
-			$qry_we .= ", we_url='".$_SESSION['we_url']."'";
+			$qry_we .= ", we_url='".$db_conn->real_escape_string($_SESSION['we_url'])."'";
 		} else {
 			$qry_we .= ", we_url=''";
 		}
