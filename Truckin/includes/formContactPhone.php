@@ -10,8 +10,8 @@ function formContactPhone(){
 			|| ($type1 == "Mobile") || ($type1 == "Fax")
 			|| ($type1 == "Mobile") || ($type1 == "Other")){
 			$type = $_POST['ph_type'];
-		} 
-	} 
+		}
+	}
 	if (isset($_SESSION['ph_number'])){
 		$number = $_SESSION['ph_number'];
 	} else if (isset($_POST['ph_number'])){
@@ -82,6 +82,7 @@ function formContactPhone(){
 <?php
 function validateContactPhone(){
 	$err_msgs = array();
+	$phoneRegex = "/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/";
 	if (!isset($_POST['ph_type'])){
 		$err_msgs[] = "An phone number type must be selected";
 	} else if (isset($_POST['ph_type'])){
@@ -92,13 +93,15 @@ function validateContactPhone(){
 		}
 	}
 	if(!isset($_POST['ph_number'])){
-		$err_msgs[] = "The phone number field must not sbe empty";
+		$err_msgs[] = "The phone number field must not be empty";
 	} else {
 		$number = trim($_POST['ph_number']);
 		if (strlen($number) == 0){
-			$err_msgs[] = "The phone number field must not sbe empty";
+			$err_msgs[] = "The phone number field must not be empty";
 		} else if (strlen($number) > 50){
 			$err_msgs[] = "The phone number is too long";
+		} else if (!preg_match($phoneRegex, $number)){
+			$err_msgs[] = "The phone number does not match North American format";
 		}
 	}
 	if (count($err_msgs) == 0){
@@ -115,4 +118,3 @@ function contactPhonePosttoSession(){
 	$_SESSION['ph_number'] = $_POST['ph_number'];
 }
 ?>
-
