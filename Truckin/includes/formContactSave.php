@@ -74,7 +74,7 @@ function formContactSave(){
 ?>
 <?php
 function saveContact($db_conn){
-	$qry_ct = "insert into contact set ct_type='".$_SESSION['ct_type']."'";
+	$qry_ct = "INSERT INTO contact SET ct_type='".$_SESSION['ct_type']."'";
 	if (isset($_SESSION['ct_first_name'])){
 		$qry_ct .= ", ct_first_name='".$db_conn->real_escape_string($_SESSION['ct_first_name'])."'";
 	} else {
@@ -139,7 +139,7 @@ function saveContact($db_conn){
 		$qry_ph = "insert into contact_phone  set ph_ct_id='".$id."'";
 		$qry_ph .= ", ph_type='".$_SESSION['ph_type']."'";
 		if (isset($_SESSION['ph_number'])){
-			$qry_ph .= ", ph_number='".$db_conn->real_escape_string($_SESSION['ph_number'])."'";
+			$qry_ph .= ", ph_number='".$_SESSION['ph_number']."'";
 		} else {
 			$qry_ph .= ", ph_number=''";
 		}
@@ -150,7 +150,7 @@ function saveContact($db_conn){
 		$qry_em = "insert into contact_email  set em_ct_id='".$id."'";
 		$qry_em .= ", em_type='".$_SESSION['em_type']."'";
 		if (isset($_SESSION['em_email'])){
-			$qry_em .= ", em_email='".$db_conn->real_escape_string($_SESSION['em_email'])."'";
+			$qry_em .= ", em_email='".$_SESSION['em_email']."'";
 		} else {
 			$qry_em .= ", em_email=''";
 		}
@@ -161,7 +161,7 @@ function saveContact($db_conn){
 		$qry_we = "insert into contact_web  set we_ct_id='".$id."'";
 		$qry_we .= ", we_type='".$_SESSION['we_type']."'";
 		if (isset($_SESSION['we_url'])){
-			$qry_we .= ", we_url='".$db_conn->real_escape_string($_SESSION['we_url'])."'";
+			$qry_we .= ", we_url='".$_SESSION['we_url']."'";
 		} else {
 			$qry_we .= ", we_url=''";
 		}

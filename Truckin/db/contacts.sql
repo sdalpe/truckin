@@ -1,8 +1,8 @@
 
 CREATE DATABASE if not exists `week7` CHARACTER SET utf8;
 
-GRANT ALL PRIVILEGES ON `week7`.* TO 'lamp1user'@'localhost';
-GRANT ALL PRIVILEGES ON `week7`.* TO 'lamp1user'@'127.0.0.1';
+GRANT ALL PRIVILEGES ON `week7`.* TO 'spencer'@'localhost';
+GRANT ALL PRIVILEGES ON `week7`.* TO 'spencer'@'127.0.0.1';
 
 USE week7;
 
@@ -87,7 +87,7 @@ create table if not exists contact_web(
 	key `contact_id` (we_ct_id),
 	foreign key (we_ct_id) references contact(ct_id)
 );
-	
+
 create table if not exists contact_note(
 	no_id int(11) not null auto_increment,
 	no_ct_id int(11) not null,

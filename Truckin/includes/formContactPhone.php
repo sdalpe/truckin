@@ -93,11 +93,11 @@ function validateContactPhone(){
 		}
 	}
 	if(!isset($_POST['ph_number'])){
-		$err_msgs[] = "The phone number field must not be empty";
+		$err_msgs[] = "The phone number field must not sbe empty";
 	} else {
 		$number = trim($_POST['ph_number']);
 		if (strlen($number) == 0){
-			$err_msgs[] = "The phone number field must not be empty";
+			$err_msgs[] = "The phone number field must not sbe empty";
 		} else if (strlen($number) > 50){
 			$err_msgs[] = "The phone number is too long";
 		} else if (!preg_match($phoneRegex, $number)){
