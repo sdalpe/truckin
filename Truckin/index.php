@@ -21,7 +21,6 @@
 <html>
 	<head>
 		<title>Contact List</title>
-	<link href="layout.css" rel="stylesheet" />
 	</head>
 	<body>
 <?php
@@ -231,7 +230,9 @@ if(($_SESSION['mode'] == "Add") && ($_SERVER['REQUEST_METHOD'] == "GET")){
 		$_SESSION['mode'] = "Display";
 		formContactDisplay();
 	} else {
-		viewContact();
+		$db_conn = dbconnect('localhost', 'week7', 'spencer', 'Mirr0r!');
+		viewContact($db_conn);
+		dbdisconnect($db_conn);
 	}
 } else if($_SESSION['mode'] == "Display"){
 	formContactDisplay();
@@ -260,6 +261,9 @@ function formContactDisplay(){
 			<?php
 				if (isset($_POST['ct_b_edit'])) {
 					echo "<h4 style='color:red'>Please select a contact to edit</h4>";
+				}
+				if (isset($_POST['ct_b_save'])) {
+					echo "<h4 style='color:blue'>Contact has been updated!</h4>";
 				}
 			?>
 		</div>
