@@ -460,7 +460,7 @@ function updateContact(){
 		} else {
 			$qry_ad .= ", ad_post_code=''";
 		}
-		if (isset($_POST['ad_contry'])){
+		if (isset($_POST['ad_country'])){
 			$qry_ad .= ", ad_country='".$_POST['ad_country']."'";
 		} else {
 			$qry_ad .= ", ad_country=''";
