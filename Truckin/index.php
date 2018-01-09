@@ -21,6 +21,7 @@
 <html>
 	<head>
 		<title>Contact List</title>
+	<link href="layout.css" rel="stylesheet" />
 	</head>
 	<body>
 <?php
