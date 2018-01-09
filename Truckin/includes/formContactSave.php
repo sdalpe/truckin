@@ -127,7 +127,7 @@ function saveContact($db_conn){
 		} else {
 			$qry_ad .= ", ad_post_code=''";
 		}
-		if (isset($_SESSION['ad_country'])){
+		if (isset($_SESSION['ad_contry'])){
 			$qry_ad .= ", ad_country='".$db_conn->real_escape_string($_SESSION['ad_country'])."'";
 		} else {
 			$qry_ad .= ", ad_country=''";
