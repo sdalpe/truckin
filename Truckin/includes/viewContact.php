@@ -1,6 +1,5 @@
 <?php
-function viewContact(){
-  $db_conn = dbconnect('localhost', 'week7', 'spencer', 'Mirr0r!');
+function viewContact($db_conn){
   $qry = 'SELECT * FROM contact';
   $qry .= ' LEFT JOIN contact_address ON ct_id = ad_ct_id';
   $qry .= ' LEFT JOIN contact_phone ON ct_id = ph_ct_id';
@@ -11,7 +10,7 @@ function viewContact(){
   $qry .= ' GROUP BY ct_id;';
 	if ($rs = $db_conn->query($qry)){
 ?>
-	<table border="1" style="padding:3px">
+	<table border="1" style="padding:3px; width:50%;">
 	   <tr><th>First Name</th><th>Last Name</th><th>Display Name</th><th>Type</th></tr>
   <?php $row = $rs->fetch_assoc() ?>
     <tr>
