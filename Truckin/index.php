@@ -1,518 +1,300 @@
 <?php
-  if (isset($_POST['ct_b_save'])) {
-    $db_conn = dbconnect('localhost', 'week7', 'lamp1user', '!Lamp1!');
-    updateContact($db_conn);
-    dbdisconnect($db_conn);
-    clearAddContactFromSession();
-    $_SESSION['mode'] = "Display";
-  }
-
-  if (isset($_POST['list_select'][0])) {
-    $_SESSION['id'] = $_POST['list_select'][0];
-  }
-
-  function getContact(){
-      $db_conn = dbconnect('localhost', 'week7', 'lamp1user', '!Lamp1!');
-      $qry = 'SELECT * FROM contact';
-      $qry .= ' LEFT JOIN contact_address ON ct_id = ad_ct_id';
-      $qry .= ' LEFT JOIN contact_phone ON ct_id = ph_ct_id';
-      $qry .= ' LEFT JOIN contact_email ON ct_id = em_ct_id';
-      $qry .= ' LEFT JOIN contact_web ON ct_id = we_ct_id';
-      $qry .= ' LEFT JOIN contact_note ON ct_id = no_ct_id';
-      $qry .= ' WHERE ct_id ='.$_POST['list_select'][0];
-      $qry .= ' GROUP BY ct_id;';
-      if ($rs = $db_conn->query($qry)){
-    		if ($rs->num_rows > 0){
-          return $rs;
-        }
-      }
-      dbdisconnect($db_conn);
-  }
-
-function formEditContact(){
-
-  $rs = getContact();
-  $row = $rs->fetch_assoc();
-
-  $fname = '';
-  $lname = '';
-  $dname = '';
-  if (isset($row['ct_first_name'])){
-    $fname = $row['ct_first_name'];
-  } else if (isset($_POST['ct_first_name'])){
-    $fname = $_POST['ct_first_name'];
-  }
-  if (isset($row['ct_last_name'])){
-    $lname = $row['ct_last_name'];
-  } else if (isset($_POST['ct_last_name'])){
-    $lname = $_POST['ct_last_name'];
-  }
-  if (isset($row['ct_disp_name'])){
-    $dname = $row['ct_disp_name'];
-  } else if (isset($_POST['ct_disp_name'])){
-    $dname = $_POST['ct_disp_name'];
-  }
-
-  $ct_type = "";
-	if (isset($row['ct_type'])) {
-		$ct_type = $row['ct_type'];
-	} else if (isset($_POST['ct_type'])){
-		$t1 = $_POST['ct_type'];
-		if (($t1 == "Friend") || ($t1 == "Family")
-			|| ($t1 == "Business") || ($t1 == "Other")) {
-			$ct_type = $_POST['ct_type'];
-		}
- 	}
-
-  $_SESSION['ad_type'] = "";
-	$_SESSION['ad_line_1'] = "";
-	$_SESSION['ad_line_2'] = "";
-	$_SESSION['ad_line_3'] = "";
-	$_SESSION['ad_city'] = "";
-	$_SESSION['ad_province'] = "";
-	$_SESSION['ad_post_code'] = "";
-	$_SESSION['ad_country'] = "";
-	if (isset($row['ad_type'])){
-		$_SESSION['ad_type'] = $row['ad_type'];
-	} else if (isset($_POST['ad_type'])){
-		$type1 = $_POST['ad_type'];
-		if (($type1 == "Home") ||  ($type1 == "Work")
-			|| ($type1 == "Other")){
-			$_SESSION['ad_type'] = $_POST['ad_type'];
-		}
+	session_start();
+	if (!isset($_SESSION['mode'])){
+		$_SESSION['mode'] = "Display";
 	}
-	if (isset($row['ad_line_1'])){
-		$_SESSION['ad_line_1'] = $row['ad_line_1'];
-	} else if (isset($_POST['ad_line_1'])){
-		$_SESSION['ad_line_1'] = $_POST['ad_line_1'];
-	}
-	if (isset($row['ad_line_2'])){
-		$_SESSION['ad_line_2'] = $row['ad_line_2'];
-	} else if (isset($_POST['ad_line_2'])){
-		$_SESSION['ad_line_2'] = $_POST['ad_line_2'];
-	}
-	if (isset($row['ad_line_3'])){
-		$_SESSION['ad_line_3'] = $row['ad_line_3'];
-	} else if (isset($_POST['ad_line_3'])){
-		$_SESSION['ad_line_3'] = $_POST['ad_line_3'];
-	}
-	if (isset($row['ad_city'])){
-		$_SESSION['ad_city'] = $row['ad_city'];
-	} else if (isset($_POST['ad_city'])){
-		$_SESSION['ad_city'] = $_POST['ad_city'];
-	}
-	if (isset($row['ad_province'])){
-		$_SESSION['ad_province'] = $row['ad_province'];
-	} else if (isset($_POST['ad_province'])){
-		$_SESSION['ad_province'] = $_POST['ad_province'];
-	}
-	if (isset($row['ad_post_code'])){
-		$_SESSION['ad_post_code'] = $row['ad_post_code'];
-	} else if (isset($_POST['ad_post_code'])){
-		$_SESSION['ad_post_code'] = $_POST['ad_post_code'];
-	}
-	if (isset($row['ad_country'])){
-		$_SESSION['ad_country']= $row['ad_country'];
-	} else if (isset($_POST['ad_country'])){
-		$_SESSION['ad_country'] = $_POST['ad_country'];
-	}
-
-  $em_type = "";
-	$email = "";
-	if (isset($row['em_type'])){
-		$em_type = $row['em_type'];
-	} else if (isset($_POST['em_type'])){
-		$type1 = $_POST['em_type'];
-		if (($type1 == "Home") ||  ($type1 == "Work")
-			 || ($type1 == "Other")){
-			$em_type = $_POST['em_type'];
-		}
-	}
-	if (isset($row['em_email'])){
-		$email = $row['em_email'];
-	} else if (isset($_POST['em_email'])){
-		$email = $_POST['em_email'];
-	}
-
-  $ph_type = "";
-  $number = "";
-  if (isset($row['ph_type'])){
-    $ph_type = $row['ph_type'];
-  } else if (isset($_POST['ph_type'])){
-    $type1 = $_POST['ph_type'];
-    if (($type1 == "Home") ||  ($type1 == "Work")
-      || ($type1 == "Mobile") || ($type1 == "Fax")
-      || ($type1 == "Mobile") || ($type1 == "Other")){
-      $ph_type = $_POST['ph_type'];
-    }
-  }
-  if (isset($row['ph_number'])){
-    $number = $row['ph_number'];
-  } else if (isset($_POST['ph_number'])){
-    $number = $_POST['ph_number'];
-  }
-
-  $we_type = "";
-  $url = "";
-  if (isset($row['we_type'])){
-    $we_type = $row['we_type'];
-  } else if (isset($_POST['we_type'])){
-    $type1 = $_POST['we_type'];
-    if (($type1 == "Personal") ||  ($type1 == "Work")
-      || ($type1 == "LinkedIn") ||  ($type1 == "Facebook")
-       || ($type1 == "Other")){
-      $we_type = $_POST['we_type'];
-    }
-  }
-  if (isset($row['we_url'])){
-    $url = $row['we_url'];
-  } else if (isset($_POST['we_url'])){
-    $url = $_POST['we_url'];
-  }
-
-
-  $note = "";
-  if (isset($row['no_note'])){
-    $note = $row['no_note'];
-  } else if (isset($_POST['no_note'])){
-    $note = $_POST['no_note'];
-  }
-
+	require_once("./includes/db_operations.php");
+	require_once("./includes/displayContacts.php");
+	require_once("./includes/formContactType.php");
+	require_once("./includes/formContactName.php");
+	require_once("./includes/formContactAddress.php");
+	require_once("./includes/formContactPhone.php");
+	require_once("./includes/formContactEmail.php");
+	require_once("./includes/formContactWeb.php");
+	require_once("./includes/formContactNote.php");
+	require_once("./includes/formContactSave.php");
+	require_once("./includes/clearAddContactFromSession.php");
+	require_once("./includes/displayErrors.php");
+	require_once("./includes/viewContact.php");
+	require_once("./includes/formEditContact.php");
 ?>
-<h3>Edit Contact Information</h3>
-<p>Change contact information as needed<br>
-   Press the 'Save' button when complete</p>
-<br>
-<form method="POST" >
-  <table>
-    <!-- // name fields -->
-	<tr><td><label for="ct_first_name">First Name</label></td>
-		<td><input type="text" name="ct_first_name" id="ct_first_name" size="50" maxlength="100" value="<?php echo $fname; ?>"></td>
-	</tr>
-	<tr><td><label for="ct_last_name">Last Name</label></td>
-		<td><input type="text" name="ct_last_name" id="ct_last_name" size="50" maxlength="100" value="<?php echo $lname; ?>"></td>
-	</tr>
-<!-- <?php if ($_SESSION['ct_type'] == "Business"){ ?>
-	<tr><td><label for="ct_disp_name">Business Name</label></td>
-<?php } else{ ?> -->
-	<tr><td><label for="ct_disp_name">Display Name</label></td>
-<!-- <?php } ?> -->
-		<td><input type="text" name="ct_disp_name" id="ct_disp_name" size="50" maxlength="200" value="<?php echo $dname; ?>"></td>
-	</tr>
-<!-- // contact type fields -->
-		<tr><td><label for="ct_type">Contact Type:</label></td>
-			<td><select id="ct_type" name="ct_type" size="1">
-<?php if((strlen($ct_type) ==0) ){ ?>
-				<option selected="selected" value="Choice">Select type</option>
-<?php } else { ?>
-				<option value="Choice">Select type</option>
-<?php }
-	  if ($ct_type == "Family"){ ?>
-				<option selected="selected" value="Family">Family</option>
-<?php } else { ?>
-				<option value="Family">Family</option>
-<?php }
-	  if ($ct_type == "Friend"){ ?>
-				<option selected="selected" value="Friend">Friend</option>
-<?php } else { ?>
-				<option value="Friend">Friend</option>
-<?php }
-	  if ($ct_type == "Business"){ ?>
-				<option selected="selected" value="Business">Business</option>
-<?php } else { ?>
-				<option value="Business">Business</option>
-<?php }
-	  if ($ct_type == "Other"){ ?>
-				<option selected="selected" value="Other">Other</option>
-<?php } else { ?>
-				<option value="Other">Other</option>
-<?php } ?>
-			</select></td>
-		</tr>
-<!-- // address fields -->
-<tr><td><label for="ad_type">Address Type:</label></td>
-<td><select id="ad_type" name="ad_type" size="1">
-<?php if ($_SESSION['ad_type'] == ""){ ?>
-    <option selected="selected" value="Choice">Choose Type</option>
-<?php } else { ?>
-    <option  value="Choice">Choose Type</option>
-<?php }
-if ($_SESSION['ad_type'] == "Home"){ ?>
-    <option selected="selected" value="Home">Home</option>
-<?php } else { ?>
-    <option  value="Home">Home</option>
-<?php }
-if ($_SESSION['ad_type'] == "Work"){ ?>
-    <option selected="selected" value="Work">Work</option>
-<?php } else { ?>
-    <option value="Work">Work</option>
-<?php }
-if ($_SESSION['ad_type'] == "Other"){ ?>
-    <option selected="selected" value="Other">Other</option>
-<?php } else { ?>
-    <option value="Other">Other</option>
-<?php } ?>
-  </select>
-</td>
-</tr>
-<tr><td><label for="ad_line_1">Address Line 1</label></td>
-<td><input type="text" id="ad_line_1" name="ad_line_1" size="50" maxlength="100" value="<?php echo $_SESSION['ad_line_1']; ?>"></td>
-</tr>
-<tr><td><label for="ad_line_2">Address Line 2</label></td>
-<td><input type="text" id="ad_line_2" name="ad_line_2" size="50" maxlength="100" value="<?php echo $_SESSION['ad_line_2']; ?>"></td>
-</tr>
-<tr><td><label for="ad_line_3">Address Line 3</label></td>
-<td><input type="text" id="ad_line_3" name="ad_line_3" size="50" maxlength="100" value="<?php echo $_SESSION['ad_line_3']; ?>"></td>
-</tr>
-<tr><td><label for="ad_city">City</label></td>
-<td><input type="text" id="ad_city" name="ad_city" size="30" maxlength="50" value="<?php echo $_SESSION['ad_city']; ?>"></td>
-</tr>
-<tr><td><label for="ad_province">Province</label></td>
-<td><input type="text" id="ad_province" name="ad_province" size="30" maxlength="50" value="<?php echo $_SESSION['ad_province']; ?>"></td>
-</tr>
-<tr><td><label for="ad_post_code">Post Code</label></td>
-<td><input type="text" id="ad_post_code" name="ad_post_code" size="30" maxlength="50" value="<?php echo $_SESSION['ad_post_code']; ?>"></td>
-</tr>
-<tr><td><label for="ad_country">Country</label></td>
-<td><input type="text" id="ad_country" name="ad_country" size="30" maxlength="50" value="<?php echo $_SESSION['ad_country']; ?>"></td>
-</tr>
-<!-- // phone number -->
-<tr><td><label for="ph_type">Phone # Type:</label></td>
-  <td><select id="ph_type" name="ph_type" size="1">
-<?php if ($ph_type == ""){ ?>
-      <option selected="selected" value="Choice">Choose Type</option>
-<?php } else { ?>
-      <option  value="Choice">Choose Type</option>
-<?php }
-  if ($ph_type == "Home"){ ?>
-      <option selected="selected" value="Home">Home</option>
-<?php } else { ?>
-      <option  value="Home">Home</option>
-<?php }
-  if ($ph_type == "Work"){ ?>
-      <option selected="selected" value="Work">Work</option>
-<?php } else { ?>
-      <option  value="Work">Work</option>
-<?php }
-  if ($ph_type == "Mobile"){ ?>
-      <option selected="selected" value="Mobile">Mobile</option>
-<?php } else { ?>
-      <option value="Mobile">Mobile</option>
-<?php }
-  if ($ph_type == "Fax"){ ?>
-      <option selected="selected" value="Fax">Fax</option>
-<?php } else { ?>
-      <option value="Fax">Fax</option>
-<?php }
-  if ($ph_type == "Other"){ ?>
-      <option selected="selected" value="Other">Other</option>
-<?php } else { ?>
-      <option value="Other">Other</option>
-<?php } ?>
-    </select>
-  </td>
-</tr>
-<tr><td><label for="ph_number">Phone Number</label></td>
-  <td><input type="tel" id="ph_number" name="ph_number" size="50" maxlength="50" value="<?php echo $number; ?>"></td>
-</tr>
-
-<!-- // email fields -->
-<tr><td><label for="em_type">Email Type:</label></td>
-  <td><select id="em_type" name="em_type" size="1">
-<?php if ($em_type == ""){ ?>
-      <option selected="selected" value="Choice">Choose Type</option>
-<?php } else { ?>
-      <option  value="Choice">Choose Type</option>
-<?php }
-  if ($em_type == "Home"){ ?>
-      <option selected="selected" value="Home">Home</option>
-<?php } else { ?>
-      <option  value="Home">Home</option>
-<?php }
-  if ($em_type == "Work"){ ?>
-      <option selected="selected" value="Work">Work</option>
-<?php } else { ?>
-      <option value="Work">Work</option>
-<?php }
-  if ($em_type == "Other"){ ?>
-      <option selected="selected" value="Other">Other</option>
-<?php } else { ?>
-      <option value="Other">Other</option>
-<?php } ?>
-    </select>
-  </td>
-</tr>
-<tr><td><label for="em_email">Email Address</label></td>
-  <td><input type="email" id="em_email" name="em_email" size="50" maxlength="50" value="<?php echo $email; ?>"></td>
-</tr>
-
-<!-- // website fields -->
-<tr><td><label for="we_type">Web Site Type:</label></td>
-  <td><select id="we_type" name="we_type" size="1">
-<?php if ($we_type == ""){ ?>
-      <option selected="selected" value="Choice">Choose Type</option>
-<?php } else { ?>
-      <option  value="Choice">Choose Type</option>
-<?php }
-  if ($we_type == "Personal"){ ?>
-      <option selected="selected" value="Personal">Personal</option>
-<?php } else { ?>
-      <option  value="Personal">Personal</option>
-<?php }
-  if ($we_type == "Work"){ ?>
-      <option selected="selected" value="Work">Work</option>
-<?php } else { ?>
-      <option value="Work">Work</option>
-<?php }
-  if ($we_type == "LinkedIn"){ ?>
-      <option selected="selected" value="LinkedIn">LinkedIn</option>
-<?php } else { ?>
-      <option value="LinkedIn">LinkedIn</option>
-<?php }
-  if ($we_type == "FaceBook"){ ?>
-      <option selected="selected" value="Facebook">Facebook</option>
-<?php } else { ?>
-      <option value="Facebook">Facebook</option>
-<?php }
-  if ($we_type == "Other"){ ?>
-      <option selected="selected" value="Other">Other</option>
-<?php } else { ?>
-      <option value="Other">Other</option>
-<?php } ?>
-    </select>
-  </td>
-</tr>
-<tr><td><label for="we_url">Web Site URL</label></td>
-  <td><input type="url" id="we_url" name="we_url" size="50" maxlength="50" value="<?php echo $url; ?>"></td>
-</tr>
-
-<!-- // contact note fields -->
-<tr><td><label for="no_note">Note</label></td>
-  <td><textarea id="no_note" name="no_note" rows="10" cols="50" maxlength="65530" ><?php echo $note; ?></textarea></td>
-</tr>
-</table>
-<table>
-<tr>
-  <td><input type="submit" name="ct_b_back" value="Back"></td>
-  <td><input type="submit" name="ct_b_save" value="Save"></td>
-</tr>
-<tr>
-<td><input type="submit" name="ct_b_cancel" value="Cancel"></td>
-</tr>
-</table>
-</form>
-<?php } ?>
+<html>
+	<head>
+		<title>Contact List</title>
+		<link href="layout.css" rel="stylesheet" />
+	</head>
+	<body>
 <?php
-function updateContact($db_conn){
+if (isset($_POST['ct_b_add']) && ($_POST['ct_b_add'] == "Add New Contact")){
+	$_SESSION['mode'] = "Add";
+	$_SESSION['add_part'] = 0;
+} else if (isset($_POST['ct_b_edit']) && ($_POST['ct_b_edit'] == "Edit") && (isset($_POST['list_select']))) {
+		$_SESSION['mode'] = "Edit";
+} else if (isset($_POST['ct_b_delete']) && ($_POST['ct_b_delete'] == "Delete")){
+	$_SESSION['mode'] = "Delete";
+} else if (isset($_POST['ct_b_view']) && ($_POST['ct_b_view'] == "View Details")){
+	$_SESSION['mode'] = "View";
+} else if (isset($_POST['ct_b_cancel']) && ($_POST['ct_b_cancel'] == "Cancel")){
+	if ($_SESSION['mode'] == "Add"){
+		$_SESSION['add_part'] = 0;
+		clearAddContactFromSession();
+	}
+	$_SESSION['mode'] = "Display";
+}
 
-  $err_msgs = array();
-
-
-  if (!isset($err_msgs)) {
-    $id = $_SESSION['id'];
-  	$qry_ct = "UPDATE contact SET ct_type='".$_POST['ct_type']."'";
-  	if (isset($_POST['ct_first_name'])){
-  		$qry_ct .= ", ct_first_name='".$_POST['ct_first_name']."'";
-  	} else {
-  		$qry_ct .= ", ct_first_name=''";
-  	}
-  	if (isset($_POST['ct_last_name'])){
-  		$qry_ct .= ", ct_last_name='".$_POST['ct_last_name']."'";
-  	} else {
-  		$qry_ct .= ", ct_last_name=''";
-  	}
-  	if (isset($_POST['ct_disp_name'])){
-  		$qry_ct .= ", ct_disp_name='".$_POST['ct_disp_name']."'";
-  	} else {
-  		$qry_ct .= ", ct_disp_name=''";
-  	}
-  	$qry_ct .= ", ct_deleted='N'";
-    $qry_ct .= " WHERE ct_id = ".$id.";";
-  	$db_conn->query($qry_ct);
-
-  	if (isset($_POST['ad_type'])){
-  		$qry_ad = "UPDATE contact_address SET ad_type='".$_POST['ad_type']."'";
-  		if (isset($_POST['ad_line_1'])){
-  			$qry_ad .= ", ad_line_1='".$_POST['ad_line_1']."'";
-  		} else {
-  			$qry_ad .= ", ad_line_1=''";
-  		}
-  		if (isset($_POST['ad_line_2'])){
-  			$qry_ad .= ", ad_line_2='".$_POST['ad_line_2']."'";
-  		} else {
-  			$qry_ad .= ", ad_line_2=''";
-  		}
-  		if (isset($_POST['ad_line_3'])){
-  			$qry_ad .= ", ad_line_3='".$_POST['ad_line_3']."'";
-  		} else {
-  			$qry_ad .= ", ad_line_3=''";
-  		}
-  		if (isset($_POST['ad_city'])){
-  			$qry_ad .= ", ad_city='".$_POST['ad_city']."'";
-  		} else {
-  			$qry_ad .= ", ad_city=''";
-  		}
-  		if (isset($_POST['ad_province'])){
-  			$qry_ad .= ", ad_province='".$_POST['ad_province']."'";
-  		} else {
-  			$qry_ad .= ", ad_province=''";
-  		}
-  		if (isset($_POST['ad_post_code'])){
-  			$qry_ad .= ", ad_post_code='".$_POST['ad_post_code']."'";
-  		} else {
-  			$qry_ad .= ", ad_post_code=''";
-  		}
-  		if (isset($_POST['ad_contry'])){
-  			$qry_ad .= ", ad_country='".$_POST['ad_country']."'";
-  		} else {
-  			$qry_ad .= ", ad_country=''";
-  		}
-  		$qry_ad .= ", ad_active='Y'";
-      $qry_ad .= " WHERE ad_ct_id = ".$id.";";
-  		$db_conn->query($qry_ad);
-  	}
-  	if (isset($_POST['ph_type'])){
-  		$qry_ph = "UPDATE contact_phone SET ph_ct_id='".$id."'";
-  		$qry_ph .= ", ph_type='".$_POST['ph_type']."'";
-  		if (isset($_POST['ph_number'])){
-  			$qry_ph .= ", ph_number='".$_POST['ph_number']."'";
-  		} else {
-  			$qry_ph .= ", ph_number=''";
-  		}
-  		$qry_ph .= ", ph_active='Y';";
-  		$db_conn->query($qry_ph);
-  	}
-  	if (isset($_POST['em_type'])){
-  		$qry_em = "UPDATE contact_email SET em_ct_id='".$id."'";
-  		$qry_em .= ", em_type='".$_POST['em_type']."'";
-  		if (isset($_POST['em_email'])){
-  			$qry_em .= ", em_email='".$_POST['em_email']."'";
-  		} else {
-  			$qry_em .= ", em_email=''";
-  		}
-  		$qry_em .= ", em_active='Y'";
-      $qry_ad .= " WHERE ad_ct_id = ".$id.";";
-  		$db_conn->query($qry_em);
-  	}
-  	if (isset($_POST['we_type'])){
-  		$qry_we = "UPDATE contact_web SET we_ct_id='".$id."'";
-  		$qry_we .= ", we_type='".$_POST['we_type']."'";
-  		if (isset($_POST['we_url'])){
-  			$qry_we .= ", we_url='".$_POST['we_url']."'";
-  		} else {
-  			$qry_we .= ", we_url=''";
-  		}
-  		$qry_we .= ", we_active='Y'";
-      $qry_ad .= " WHERE ad_ct_id = ".$id.";";
-  		$db_conn->query($qry_we);
-  	}
-  	if (isset($_POST['no_note'])){
-  		$qry_no = "UPDATE contact_note SET no_ct_id='".$id."'";
-  		$qry_no .= ", no_type=''";
-  		$qry_no .= ", no_note='".$_POST['no_note']."'";
-      $qry_ad .= " WHERE ad_ct_id = ".$id.";";
-  		$db_conn->query($qry_no);
-  	}
-  }
+if(($_SESSION['mode'] == "Add") && ($_SERVER['REQUEST_METHOD'] == "GET")){
+	switch ($_SESSION['add_part']) {
+		case 0:
+		case 1:
+			formContactType();
+			break;
+		case 2:
+			formContactName();
+			break;
+		case 3:
+			formContactAddress();
+			break;
+		case 4:
+			formContactPhone();
+			break;
+		case 5:
+			formContactEmail();
+			break;
+		default:
+	}
+} else if($_SESSION['mode'] == "Add"){
+	switch ($_SESSION['add_part']) {
+		case 0:
+			echo "<h1> Add New Contact </h1>\n";
+			$_SESSION['add_part'] = 1;
+			formContactType();
+			break;
+		case 1:
+			echo "<h1> Add New Contact </h1>\n";
+			$err_msgs = validateContactType();
+			if (count($err_msgs) > 0){
+				displayErrors($err_msgs);
+				formContactType();
+			} else {
+				contactTypePostToSession();
+				$_SESSION['add_part'] = 2;
+				formContactName();
+			}
+			break;
+		case 2:
+			echo "<h1> Add New Contact </h1>\n";
+			$err_msgs = validateContactName();
+			if (count($err_msgs) > 0){
+				displayErrors($err_msgs);
+				formContactName();
+			} else if ((isset($_POST['ct_b_next']))
+					&& ($_POST['ct_b_next'] == "Next")){
+				contactNamePostToSession();
+				$_SESSION['add_part'] = 3;
+				formContactAddress();
+			} else if ((isset($_POST['ct_b_back']))
+						&& ($_POST['ct_b_back'] == "Back")){
+				contactNamePostToSession();
+				$_SESSION['add_part'] = 1;
+				formContactType();
+			}
+			break;
+		case 3:
+			echo "<h1> Add New Contact </h1>\n";
+			$err_msgs = validateContactAddress();
+			if ((!isset($_POST['ct_b_skip'])) && (count($err_msgs) > 0)){
+				displayErrors($err_msgs);
+				formContactAddress();
+			} else if (isset($_POST['ct_b_skip'])){
+				$_SESSION['add_part'] = 4;
+				formContactPhone();
+			} else if ((isset($_POST['ct_b_next']))
+					&& ($_POST['ct_b_next'] == "Next")){
+				contactAddressPostToSession();
+				$_SESSION['add_part'] = 4;
+				formContactPhone();
+			} else if ((isset($_POST['ct_b_back']))
+						&& ($_POST['ct_b_back'] == "Back")){
+				contactAddressPostToSession();
+				$_SESSION['add_part'] = 2;
+				formContactName();
+			}
+			break;
+		case 4:
+			echo "<h1> Add New Contact </h1>\n";
+			$err_msgs = validateContactPhone();
+			if ((!isset($_POST['ct_b_skip'])) && (count($err_msgs) > 0)){
+				displayErrors($err_msgs);
+				formContactPhone();
+			} else if (isset($_POST['ct_b_skip'])){
+				$_SESSION['add_part'] = 5;
+				formContactEmail();
+			} else if ((isset($_POST['ct_b_next']))
+					&& ($_POST['ct_b_next'] == "Next")){
+				contactPhonePostToSession();
+				$_SESSION['add_part'] = 5;
+				formContactEmail();
+			} else if ((isset($_POST['ct_b_back']))
+						&& ($_POST['ct_b_back'] == "Back")){
+				contactPhonePostToSession();
+				$_SESSION['add_part'] = 3;
+				formContactAddress();
+			}
+			break;
+		case 5:
+			echo "<h1> Add New Contact </h1>\n";
+			$err_msgs = validateContactEmail();
+			if ((!isset($_POST['ct_b_skip'])) && (count($err_msgs) > 0)){
+				displayErrors($err_msgs);
+				formContactEmail();
+			} else if (isset($_POST['ct_b_skip'])){
+				$_SESSION['add_part'] = 6;
+				formContactWeb();
+			} else if ((isset($_POST['ct_b_next']))
+					&& ($_POST['ct_b_next'] == "Next")){
+				contactEmailPostToSession();
+				$_SESSION['add_part'] = 6;
+				formContactWeb();
+			} else if ((isset($_POST['ct_b_back']))
+						&& ($_POST['ct_b_back'] == "Back")){
+				contactEmailPostToSession();
+				$_SESSION['add_part'] = 4;
+				formContactPhone();
+			}
+			break;
+		case 6:
+			echo "<h1> Add New Contact </h1>\n";
+			$err_msgs = validateContactWeb();
+			if ((!isset($_POST['ct_b_skip'])) && (count($err_msgs) > 0)){
+				displayErrors($err_msgs);
+				formContactWeb();
+			} else if (isset($_POST['ct_b_skip'])){
+				$_SESSION['add_part'] = 7;
+				formContactNote();
+			} else if ((isset($_POST['ct_b_next']))
+					&& ($_POST['ct_b_next'] == "Next")){
+				contactWebPostToSession();
+				$_SESSION['add_part'] = 7;
+				formContactNote();
+			} else if ((isset($_POST['ct_b_back']))
+						&& ($_POST['ct_b_back'] == "Back")){
+				contactWebPostToSession();
+				$_SESSION['add_part'] = 5;
+				formContactEmail();
+			}
+			break;
+		case 7:
+			echo "<h1> Add New Contact </h1>\n";
+			$err_msgs = validateContactNote();
+			if ((!isset($_POST['ct_b_skip'])) && (count($err_msgs) > 0)){
+				displayErrors($err_msgs);
+				formContactNote();
+			} else if (isset($_POST['ct_b_skip'])){
+				$_SESSION['add_part'] = 8;
+				formContactSave();
+			} else if ((isset($_POST['ct_b_next']))
+					&& ($_POST['ct_b_next'] == "Next")){
+				contactNotePostToSession();
+				$_SESSION['add_part'] = 8;
+				formContactSave();
+			} else if ((isset($_POST['ct_b_back']))
+						&& ($_POST['ct_b_back'] == "Back")){
+				contactNotePostToSession();
+				$_SESSION['add_part'] = 6;
+				formContactWeb();
+			}
+			break;
+		case 8:
+			if ((isset($_POST['ct_b_next']))
+					&& ($_POST['ct_b_next'] == "Save")){
+				$db_conn = dbconnect('localhost', 'week7', 'lamp1user', '!Lamp1!');
+				saveContact($db_conn);
+				dbdisconnect($db_conn);
+				$_SESSION['add_part'] = 0;
+				clearAddContactFromSession();
+				$_SESSION['mode'] = "Display";
+				formContactDisplay();
+			} else if ((isset($_POST['ct_b_back']))
+						&& ($_POST['ct_b_back'] == "Back")){
+				echo "<h1> Add New Contact </h1>\n";
+				$_SESSION['add_part'] = 7;
+				formContactNote();
+			}
+			break;
+		default:
+	}
+} else if($_SESSION['mode'] == "Edit"){
+		formEditContact();
+} else if($_SESSION['mode'] == "Delete"){
+} else if($_SESSION['mode'] == "View"){
+	if (isset($_POST['ct_b_back'])) {
+		$_SESSION['mode'] = "Display";
+		formContactDisplay();
+	} else {
+		$db_conn = dbconnect('localhost', 'week7', 'lamp1user', '!Lamp1!');
+		viewContact($db_conn);
+		dbdisconnect($db_conn);
+	}
+} else if($_SESSION['mode'] == "Display"){
+	formContactDisplay();
 }
 ?>
+	</body>
+</html>
+
+<?php
+function formContactDisplay(){
+	$db_conn = dbconnect('localhost', 'week7', 'lamp1user', '!Lamp1!');
+	$fvalue = "";
+	if (isset($_POST['ct_b_filter']) && isset($_POST['ct_filter'])){
+		$_SESSION['ct_filter'] = $db_conn->real_escape_string(trim($_POST['ct_filter']));
+		$fvalue = $_SESSION['ct_filter'];
+	} else if (isset($_POST['ct_b_filter_clear'])){
+		$_SESSION['ct_filter'] = "";
+		$fvalue = $_SESSION['ct_filter'];
+	} else if (isset($_SESSION['ct_filter'])){
+		$fvalue = $_SESSION['ct_filter'];
+	}
+?>
+		<h1> Contacts </h1>
+		<div>
+			<h2> Contacts </h2>
+			<?php
+				if (isset($_POST['ct_b_edit'])) {
+					echo "<h4 style='color:red'>Please select a contact to edit</h4>";
+				}
+				if (isset($_POST['ct_b_save'])) {
+					echo "<h4 style='color:blue'>Contact has been updated!</h4>";
+				}
+			?>
+		</div>
+		<div>
+		<form method="POST">
+		<table>
+		<tr>
+			<td><label for="ct_filter">Filter Value</label></td>
+			<td><input type="text" name="ct_filter" id="ct_filter" value="<?php echo $fvalue; ?>"></td>
+			<td><input type="submit" name="ct_b_filter" value="Filter">
+			<td><input type="submit" name="ct_b_filter_clear" value="Clear Filter">
+		</tr>
+		</table>
+		<br>
+<?php
+	displayContacts($db_conn);
+	dbdisconnect($db_conn);
+?>
+			<br>
+			<table>
+			<tr>
+				<td><input type="submit" name ="ct_b_view" value="View Details"></td>
+				<td><input type="submit" name ="ct_b_edit" value="Edit"></td>
+				<td><input type="submit" name ="ct_b_delete" value="Delete"></td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td><input type="submit" name ="ct_b_add" value="Add New Contact"></td>
+			</tr>
+			</table>
+		</form>
+		</div>
+<?php } ?>
