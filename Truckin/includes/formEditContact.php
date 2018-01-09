@@ -1,6 +1,9 @@
 <?php
   if (isset($_POST['ct_b_save'])) {
-    updateContact();
+    $db_conn = dbconnect('localhost', 'week7', 'lamp1user', '!Lamp1!');
+    updateContact($db_conn);
+    dbdisconnect($db_conn);
+    clearAddContactFromSession();
     $_SESSION['mode'] = "Display";
   }
 
@@ -9,7 +12,7 @@
   }
 
   function getContact(){
-      $db_conn = dbconnect('localhost', 'week7', 'spencer', 'Mirr0r!');
+      $db_conn = dbconnect('localhost', 'week7', 'lamp1user', '!Lamp1!');
       $qry = 'SELECT * FROM contact';
       $qry .= ' LEFT JOIN contact_address ON ct_id = ad_ct_id';
       $qry .= ' LEFT JOIN contact_phone ON ct_id = ph_ct_id';
@@ -23,6 +26,7 @@
           return $rs;
         }
       }
+      dbdisconnect($db_conn);
   }
 
 function formEditContact(){
@@ -60,57 +64,57 @@ function formEditContact(){
 		}
  	}
 
-  $ad_type = "";
-	$line1 = "";
-	$line2 = "";
-	$line3 = "";
-	$city = "";
-	$province = "";
-	$postcode = "";
-	$country = "";
+  $_SESSION['ad_type'] = "";
+	$_SESSION['ad_line_1'] = "";
+	$_SESSION['ad_line_2'] = "";
+	$_SESSION['ad_line_3'] = "";
+	$_SESSION['ad_city'] = "";
+	$_SESSION['ad_province'] = "";
+	$_SESSION['ad_post_code'] = "";
+	$_SESSION['ad_country'] = "";
 	if (isset($row['ad_type'])){
-		$ad_type = $row['ad_type'];
+		$_SESSION['ad_type'] = $row['ad_type'];
 	} else if (isset($_POST['ad_type'])){
 		$type1 = $_POST['ad_type'];
 		if (($type1 == "Home") ||  ($type1 == "Work")
 			|| ($type1 == "Other")){
-			$ad_type = $_POST['ad_type'];
+			$_SESSION['ad_type'] = $_POST['ad_type'];
 		}
 	}
 	if (isset($row['ad_line_1'])){
-		$line1 = $row['ad_line_1'];
+		$_SESSION['ad_line_1'] = $row['ad_line_1'];
 	} else if (isset($_POST['ad_line_1'])){
-		$line1 = $_POST['ad_line_1'];
+		$_SESSION['ad_line_1'] = $_POST['ad_line_1'];
 	}
 	if (isset($row['ad_line_2'])){
-		$line2 = $row['ad_line_2'];
+		$_SESSION['ad_line_2'] = $row['ad_line_2'];
 	} else if (isset($_POST['ad_line_2'])){
-		$line2 = $_POST['ad_line_2'];
+		$_SESSION['ad_line_2'] = $_POST['ad_line_2'];
 	}
 	if (isset($row['ad_line_3'])){
-		$line3 = $row['ad_line_3'];
+		$_SESSION['ad_line_3'] = $row['ad_line_3'];
 	} else if (isset($_POST['ad_line_3'])){
-		$line3 = $_POST['ad_line_3'];
+		$_SESSION['ad_line_3'] = $_POST['ad_line_3'];
 	}
 	if (isset($row['ad_city'])){
-		$city = $row['ad_city'];
+		$_SESSION['ad_city'] = $row['ad_city'];
 	} else if (isset($_POST['ad_city'])){
-		$city = $_POST['ad_city'];
+		$_SESSION['ad_city'] = $_POST['ad_city'];
 	}
 	if (isset($row['ad_province'])){
-		$province = $row['ad_province'];
+		$_SESSION['ad_province'] = $row['ad_province'];
 	} else if (isset($_POST['ad_province'])){
-		$province = $_POST['ad_province'];
+		$_SESSION['ad_province'] = $_POST['ad_province'];
 	}
 	if (isset($row['ad_post_code'])){
-		$postcode = $row['ad_post_code'];
+		$_SESSION['ad_post_code'] = $row['ad_post_code'];
 	} else if (isset($_POST['ad_post_code'])){
-		$postcode = $_POST['ad_post_code'];
+		$_SESSION['ad_post_code'] = $_POST['ad_post_code'];
 	}
 	if (isset($row['ad_country'])){
-		$country= $row['ad_country'];
+		$_SESSION['ad_country']= $row['ad_country'];
 	} else if (isset($_POST['ad_country'])){
-		$country = $_POST['ad_country'];
+		$_SESSION['ad_country'] = $_POST['ad_country'];
 	}
 
   $em_type = "";
@@ -176,12 +180,6 @@ function formEditContact(){
 
 ?>
 <h3>Edit Contact Information</h3>
-<br /><b>Notice</b>:  Undefined variable: line1 in <b>C:\xampp\htdocs\Project_2\includes\formEditContact.php</b> on line <b>257</b><br />
-<!-- <?php
-  echo "<pre>\n";
-  print_r($row);
-  echo "</pre>\n";
-?> -->
 <p>Change contact information as needed<br>
    Press the 'Save' button when complete</p>
 <br>
@@ -234,22 +232,22 @@ function formEditContact(){
 <!-- // address fields -->
 <tr><td><label for="ad_type">Address Type:</label></td>
 <td><select id="ad_type" name="ad_type" size="1">
-<?php if ($ad_type == ""){ ?>
+<?php if ($_SESSION['ad_type'] == ""){ ?>
     <option selected="selected" value="Choice">Choose Type</option>
 <?php } else { ?>
     <option  value="Choice">Choose Type</option>
 <?php }
-if ($ad_type == "Home"){ ?>
+if ($_SESSION['ad_type'] == "Home"){ ?>
     <option selected="selected" value="Home">Home</option>
 <?php } else { ?>
     <option  value="Home">Home</option>
 <?php }
-if ($ad_type == "Work"){ ?>
+if ($_SESSION['ad_type'] == "Work"){ ?>
     <option selected="selected" value="Work">Work</option>
 <?php } else { ?>
     <option value="Work">Work</option>
 <?php }
-if ($ad_type == "Other"){ ?>
+if ($_SESSION['ad_type'] == "Other"){ ?>
     <option selected="selected" value="Other">Other</option>
 <?php } else { ?>
     <option value="Other">Other</option>
@@ -258,25 +256,25 @@ if ($ad_type == "Other"){ ?>
 </td>
 </tr>
 <tr><td><label for="ad_line_1">Address Line 1</label></td>
-<td><input type="text" id="ad_line_1" name="ad_line_1" size="50" maxlength="100" value="<?php echo $line1; ?>"></td>
+<td><input type="text" id="ad_line_1" name="ad_line_1" size="50" maxlength="100" value="<?php echo $_SESSION['ad_line_1']; ?>"></td>
 </tr>
 <tr><td><label for="ad_line_2">Address Line 2</label></td>
-<td><input type="text" id="ad_line_2" name="ad_line_2" size="50" maxlength="100" value="<?php echo $line2; ?>"></td>
+<td><input type="text" id="ad_line_2" name="ad_line_2" size="50" maxlength="100" value="<?php echo $_SESSION['ad_line_2']; ?>"></td>
 </tr>
 <tr><td><label for="ad_line_3">Address Line 3</label></td>
-<td><input type="text" id="ad_line_3" name="ad_line_3" size="50" maxlength="100" value="<?php echo $line3; ?>"></td>
+<td><input type="text" id="ad_line_3" name="ad_line_3" size="50" maxlength="100" value="<?php echo $_SESSION['ad_line_3']; ?>"></td>
 </tr>
 <tr><td><label for="ad_city">City</label></td>
-<td><input type="text" id="ad_city" name="ad_city" size="30" maxlength="50" value="<?php echo $city; ?>"></td>
+<td><input type="text" id="ad_city" name="ad_city" size="30" maxlength="50" value="<?php echo $_SESSION['ad_city']; ?>"></td>
 </tr>
 <tr><td><label for="ad_province">Province</label></td>
-<td><input type="text" id="ad_province" name="ad_province" size="30" maxlength="50" value="<?php echo $province; ?>"></td>
+<td><input type="text" id="ad_province" name="ad_province" size="30" maxlength="50" value="<?php echo $_SESSION['ad_province']; ?>"></td>
 </tr>
 <tr><td><label for="ad_post_code">Post Code</label></td>
-<td><input type="text" id="ad_post_code" name="ad_post_code" size="30" maxlength="50" value="<?php echo $postcode; ?>"></td>
+<td><input type="text" id="ad_post_code" name="ad_post_code" size="30" maxlength="50" value="<?php echo $_SESSION['ad_post_code']; ?>"></td>
 </tr>
 <tr><td><label for="ad_country">Country</label></td>
-<td><input type="text" id="ad_country" name="ad_country" size="30" maxlength="50" value="<?php echo $country; ?>"></td>
+<td><input type="text" id="ad_country" name="ad_country" size="30" maxlength="50" value="<?php echo $_SESSION['ad_country']; ?>"></td>
 </tr>
 <!-- // phone number -->
 <tr><td><label for="ph_type">Phone # Type:</label></td>
@@ -405,111 +403,116 @@ if ($ad_type == "Other"){ ?>
 </form>
 <?php } ?>
 <?php
-function updateContact(){
-  $db_conn = dbconnect('localhost', 'week7', 'spencer', 'Mirr0r!');
-  $id = $_SESSION['id'];
-	$qry_ct = "UPDATE contact SET ct_type='".$_POST['ct_type']."'";
-	if (isset($_POST['ct_first_name'])){
-		$qry_ct .= ", ct_first_name='".$_POST['ct_first_name']."'";
-	} else {
-		$qry_ct .= ", ct_first_name=''";
-	}
-	if (isset($_POST['ct_last_name'])){
-		$qry_ct .= ", ct_last_name='".$_POST['ct_last_name']."'";
-	} else {
-		$qry_ct .= ", ct_last_name=''";
-	}
-	if (isset($_POST['ct_disp_name'])){
-		$qry_ct .= ", ct_disp_name='".$_POST['ct_disp_name']."'";
-	} else {
-		$qry_ct .= ", ct_disp_name=''";
-	}
-	$qry_ct .= ", ct_deleted='N'";
-  $qry_ct .= " WHERE ct_id = ".$id.";";
-	$db_conn->query($qry_ct);
+function updateContact($db_conn){
 
-	if (isset($_POST['ad_type'])){
-		$qry_ad = "UPDATE contact_address SET ad_type='".$_POST['ad_type']."'";
-		if (isset($_POST['ad_line_1'])){
-			$qry_ad .= ", ad_line_1='".$_POST['ad_line_1']."'";
-		} else {
-			$qry_ad .= ", ad_line_1=''";
-		}
-		if (isset($_POST['ad_line_2'])){
-			$qry_ad .= ", ad_line_2='".$_POST['ad_line_2']."'";
-		} else {
-			$qry_ad .= ", ad_line_2=''";
-		}
-		if (isset($_POST['ad_line_3'])){
-			$qry_ad .= ", ad_line_3='".$_POST['ad_line_3']."'";
-		} else {
-			$qry_ad .= ", ad_line_3=''";
-		}
-		if (isset($_POST['ad_city'])){
-			$qry_ad .= ", ad_city='".$_POST['ad_city']."'";
-		} else {
-			$qry_ad .= ", ad_city=''";
-		}
-		if (isset($_POST['ad_province'])){
-			$qry_ad .= ", ad_province='".$_POST['ad_province']."'";
-		} else {
-			$qry_ad .= ", ad_province=''";
-		}
-		if (isset($_POST['ad_post_code'])){
-			$qry_ad .= ", ad_post_code='".$_POST['ad_post_code']."'";
-		} else {
-			$qry_ad .= ", ad_post_code=''";
-		}
-		if (isset($_POST['ad_country'])){
-			$qry_ad .= ", ad_country='".$_POST['ad_country']."'";
-		} else {
-			$qry_ad .= ", ad_country=''";
-		}
-		$qry_ad .= ", ad_active='Y'";
-    $qry_ad .= " WHERE ad_ct_id = ".$id.";";
-		$db_conn->query($qry_ad);
-	}
-	if (isset($_POST['ph_type'])){
-		$qry_ph = "UPDATE contact_phone SET ph_ct_id='".$id."'";
-		$qry_ph .= ", ph_type='".$_POST['ph_type']."'";
-		if (isset($_POST['ph_number'])){
-			$qry_ph .= ", ph_number='".$_POST['ph_number']."'";
-		} else {
-			$qry_ph .= ", ph_number=''";
-		}
-		$qry_ph .= ", ph_active='Y';";
-		$db_conn->query($qry_ph);
-	}
-	if (isset($_POST['em_type'])){
-		$qry_em = "UPDATE contact_email SET em_ct_id='".$id."'";
-		$qry_em .= ", em_type='".$_POST['em_type']."'";
-		if (isset($_POST['em_email'])){
-			$qry_em .= ", em_email='".$_POST['em_email']."'";
-		} else {
-			$qry_em .= ", em_email=''";
-		}
-		$qry_em .= ", em_active='Y'";
-    $qry_ad .= " WHERE ad_ct_id = ".$id.";";
-		$db_conn->query($qry_em);
-	}
-	if (isset($_POST['we_type'])){
-		$qry_we = "UPDATE contact_web SET we_ct_id='".$id."'";
-		$qry_we .= ", we_type='".$_POST['we_type']."'";
-		if (isset($_POST['we_url'])){
-			$qry_we .= ", we_url='".$_POST['we_url']."'";
-		} else {
-			$qry_we .= ", we_url=''";
-		}
-		$qry_we .= ", we_active='Y'";
-    $qry_ad .= " WHERE ad_ct_id = ".$id.";";
-		$db_conn->query($qry_we);
-	}
-	if (isset($_POST['no_note'])){
-		$qry_no = "UPDATE contact_note SET no_ct_id='".$id."'";
-		$qry_no .= ", no_type=''";
-		$qry_no .= ", no_note='".$_POST['no_note']."'";
-    $qry_ad .= " WHERE ad_ct_id = ".$id.";";
-		$db_conn->query($qry_no);
-	}
+  $err_msgs = array();
+
+
+  if (!isset($err_msgs)) {
+    $id = $_SESSION['id'];
+  	$qry_ct = "UPDATE contact SET ct_type='".$_POST['ct_type']."'";
+  	if (isset($_POST['ct_first_name'])){
+  		$qry_ct .= ", ct_first_name='".$_POST['ct_first_name']."'";
+  	} else {
+  		$qry_ct .= ", ct_first_name=''";
+  	}
+  	if (isset($_POST['ct_last_name'])){
+  		$qry_ct .= ", ct_last_name='".$_POST['ct_last_name']."'";
+  	} else {
+  		$qry_ct .= ", ct_last_name=''";
+  	}
+  	if (isset($_POST['ct_disp_name'])){
+  		$qry_ct .= ", ct_disp_name='".$_POST['ct_disp_name']."'";
+  	} else {
+  		$qry_ct .= ", ct_disp_name=''";
+  	}
+  	$qry_ct .= ", ct_deleted='N'";
+    $qry_ct .= " WHERE ct_id = ".$id.";";
+  	$db_conn->query($qry_ct);
+
+  	if (isset($_POST['ad_type'])){
+  		$qry_ad = "UPDATE contact_address SET ad_type='".$_POST['ad_type']."'";
+  		if (isset($_POST['ad_line_1'])){
+  			$qry_ad .= ", ad_line_1='".$_POST['ad_line_1']."'";
+  		} else {
+  			$qry_ad .= ", ad_line_1=''";
+  		}
+  		if (isset($_POST['ad_line_2'])){
+  			$qry_ad .= ", ad_line_2='".$_POST['ad_line_2']."'";
+  		} else {
+  			$qry_ad .= ", ad_line_2=''";
+  		}
+  		if (isset($_POST['ad_line_3'])){
+  			$qry_ad .= ", ad_line_3='".$_POST['ad_line_3']."'";
+  		} else {
+  			$qry_ad .= ", ad_line_3=''";
+  		}
+  		if (isset($_POST['ad_city'])){
+  			$qry_ad .= ", ad_city='".$_POST['ad_city']."'";
+  		} else {
+  			$qry_ad .= ", ad_city=''";
+  		}
+  		if (isset($_POST['ad_province'])){
+  			$qry_ad .= ", ad_province='".$_POST['ad_province']."'";
+  		} else {
+  			$qry_ad .= ", ad_province=''";
+  		}
+  		if (isset($_POST['ad_post_code'])){
+  			$qry_ad .= ", ad_post_code='".$_POST['ad_post_code']."'";
+  		} else {
+  			$qry_ad .= ", ad_post_code=''";
+  		}
+  		if (isset($_POST['ad_contry'])){
+  			$qry_ad .= ", ad_country='".$_POST['ad_country']."'";
+  		} else {
+  			$qry_ad .= ", ad_country=''";
+  		}
+  		$qry_ad .= ", ad_active='Y'";
+      $qry_ad .= " WHERE ad_ct_id = ".$id.";";
+  		$db_conn->query($qry_ad);
+  	}
+  	if (isset($_POST['ph_type'])){
+  		$qry_ph = "UPDATE contact_phone SET ph_ct_id='".$id."'";
+  		$qry_ph .= ", ph_type='".$_POST['ph_type']."'";
+  		if (isset($_POST['ph_number'])){
+  			$qry_ph .= ", ph_number='".$_POST['ph_number']."'";
+  		} else {
+  			$qry_ph .= ", ph_number=''";
+  		}
+  		$qry_ph .= ", ph_active='Y';";
+  		$db_conn->query($qry_ph);
+  	}
+  	if (isset($_POST['em_type'])){
+  		$qry_em = "UPDATE contact_email SET em_ct_id='".$id."'";
+  		$qry_em .= ", em_type='".$_POST['em_type']."'";
+  		if (isset($_POST['em_email'])){
+  			$qry_em .= ", em_email='".$_POST['em_email']."'";
+  		} else {
+  			$qry_em .= ", em_email=''";
+  		}
+  		$qry_em .= ", em_active='Y'";
+      $qry_ad .= " WHERE ad_ct_id = ".$id.";";
+  		$db_conn->query($qry_em);
+  	}
+  	if (isset($_POST['we_type'])){
+  		$qry_we = "UPDATE contact_web SET we_ct_id='".$id."'";
+  		$qry_we .= ", we_type='".$_POST['we_type']."'";
+  		if (isset($_POST['we_url'])){
+  			$qry_we .= ", we_url='".$_POST['we_url']."'";
+  		} else {
+  			$qry_we .= ", we_url=''";
+  		}
+  		$qry_we .= ", we_active='Y'";
+      $qry_ad .= " WHERE ad_ct_id = ".$id.";";
+  		$db_conn->query($qry_we);
+  	}
+  	if (isset($_POST['no_note'])){
+  		$qry_no = "UPDATE contact_note SET no_ct_id='".$id."'";
+  		$qry_no .= ", no_type=''";
+  		$qry_no .= ", no_note='".$_POST['no_note']."'";
+      $qry_ad .= " WHERE ad_ct_id = ".$id.";";
+  		$db_conn->query($qry_no);
+  	}
+  }
 }
 ?>
