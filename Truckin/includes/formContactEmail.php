@@ -71,7 +71,7 @@ function formContactEmail(){
 <?php
 function validateContactEmail(){
 	$err_msgs = array();
-	$emailRegex = "/^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/";
+	$emailRegex = '/^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/';
 	if (!isset($_POST['em_type'])){
 		$err_msgs[] = "An email type must be selected";
 	} else if (isset($_POST['em_type'])){
@@ -89,8 +89,8 @@ function validateContactEmail(){
 			$err_msgs[] = "The email address field must not sbe empty";
 		} else if (strlen($email) > 50){
 			$err_msgs[] = "The email address is too long";
-		} else if(!preg_match($emailRegex, $email)){
-			$err_msgs[] = "The email address is not proper format";
+		} else if (!preg_match($emailRegex, $email)) {
+			$err_msgs[] = "Email is not of a valid format.";
 		}
 	}
 	if (count($err_msgs) == 0){

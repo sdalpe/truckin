@@ -1,0 +1,132 @@
+body {
+   background: aliceblue;
+   font: 100%;
+   font-family: "Helvetica Neue", Helvetica, Arial;
+   padding-top: 20px;
+   display: block;
+   text-align: center;
+}
+form {
+    padding: 0px 25px 25px;
+    background: #fff;
+    box-shadow:
+	0px 0px 0px 5px rgba( 255,255,255,0.4 ),
+	0px 4px 20px rgba( 0,0,0,0.33 );
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    position: static;
+    font-size: 20px;
+    font-weight: 300;
+
+}
+container {
+    width: 406px;
+    max-width: 406px;
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+}
+header {
+    color: #333333;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+p {
+    color: #8f8f8f;
+    font-size: 20px;
+    font-weight: 300;
+}
+input {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    outline: none;
+    margin:0;
+}
+input, select {
+    background: #f5f5f5;
+    font-size: 0.8rem;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    border: none;
+    padding: 13px 10px;
+    width: 330px;
+    margin-bottom: 20px;
+    box-shadow: inset 0px 2px 3px rgba( 0,0,0,0.1 );
+    clear: both;
+    font-size: 20px;
+    font-weight: 300;
+}
+input:focus, select:focus {
+    background: #fff
+}
+
+span {
+    display:block;
+    background: #F9A5A5;
+    padding: 2px 5px;
+    color: #666;
+    text-align: center;
+}
+input[type="submit"], input[type="button"] {
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px 0;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-align: center;
+    text-decoration: none;
+    background: -moz-linear-gradient(
+	top,
+	#b9c5dd 0%,
+	#a4b0cb);
+    background: -webkit-gradient(
+	linear, left top, left bottom,
+	from(#b9c5dd),
+	to(#a4b0cb));
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    border: 1px solid #737b8d;
+    -moz-box-shadow:
+	0px 5px 5px rgba(000,000,000,0.1),
+	inset 0px 1px 0px rgba(255,255,255,0.5);
+    -webkit-box-shadow:
+	0px 5px 5px rgba(000,000,000,0.1),
+	inset 0px 1px 0px rgba(255,255,255,0.5);
+    box-shadow:
+	0px 5px 5px rgba(000,000,000,0.1),
+	inset 0px 1px 0px rgba(255,255,255,0.5);
+    text-shadow:
+	0px 1px 3px rgba(000,000,000,0.3),
+	0px 0px 0px rgba(255,255,255,0);
+    display: table;
+    position: static;
+    clear: both;
+
+}
+input[type="submit"]:hover, input[type="button"]:hover {
+    background: -moz-linear-gradient(
+	top,
+	#a4b0cb 0%,
+	#b9c5dd);
+    background: -webkit-gradient(
+	linear, left top, left bottom,
+	from(#a4b0cb),
+	to(#b9c5dd));s
+}
+
+label .errorText {
+    color: #f00;
+    font-weight: bold;
+    vertical-align: top;
+}

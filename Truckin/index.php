@@ -1,10 +1,10 @@
-<?php 
-	session_start(); 
+<?php
+	session_start();
 	if (!isset($_SESSION['mode'])){
 		$_SESSION['mode'] = "Display";
 	}
-	require_once("./includes/db_operations.php"); 
-	require_once("./includes/displayContacts.php"); 
+	require_once("./includes/db_operations.php");
+	require_once("./includes/displayContacts.php");
 	require_once("./includes/formContactType.php");
 	require_once("./includes/formContactName.php");
 	require_once("./includes/formContactAddress.php");
@@ -15,18 +15,21 @@
 	require_once("./includes/formContactSave.php");
 	require_once("./includes/clearAddContactFromSession.php");
 	require_once("./includes/displayErrors.php");
+	require_once("./includes/viewContact.php");
+	require_once("./includes/formEditContact.php");
 ?>
 <html>
 	<head>
 		<title>Contact List</title>
+		<link href="layout.css" rel="stylesheet" />
 	</head>
 	<body>
 <?php
 if (isset($_POST['ct_b_add']) && ($_POST['ct_b_add'] == "Add New Contact")){
 	$_SESSION['mode'] = "Add";
 	$_SESSION['add_part'] = 0;
-} else if (isset($_POST['ct_b_edit']) && ($_POST['ct_b_edit'] == "Edit")){
-	$_SESSION['mode'] = "Edit";
+} else if (isset($_POST['ct_b_edit']) && ($_POST['ct_b_edit'] == "Edit") && (isset($_POST['list_select']))) {
+		$_SESSION['mode'] = "Edit";
 } else if (isset($_POST['ct_b_delete']) && ($_POST['ct_b_delete'] == "Delete")){
 	$_SESSION['mode'] = "Delete";
 } else if (isset($_POST['ct_b_view']) && ($_POST['ct_b_view'] == "View Details")){
@@ -39,12 +42,7 @@ if (isset($_POST['ct_b_add']) && ($_POST['ct_b_add'] == "Add New Contact")){
 	$_SESSION['mode'] = "Display";
 }
 
-//	echo "<pre>\n";
-//	print_r($_POST);
-//	print_r($_SESSION);
-//	echo "</pre>\n";
-
-if(($_SESSION['mode'] == "Add") && ($_SERVER['REQUEST_METHOD'] == "GET")){ 
+if(($_SESSION['mode'] == "Add") && ($_SERVER['REQUEST_METHOD'] == "GET")){
 	switch ($_SESSION['add_part']) {
 		case 0:
 		case 1:
@@ -64,7 +62,7 @@ if(($_SESSION['mode'] == "Add") && ($_SERVER['REQUEST_METHOD'] == "GET")){
 			break;
 		default:
 	}
-} else if($_SESSION['mode'] == "Add"){ 
+} else if($_SESSION['mode'] == "Add"){
 	switch ($_SESSION['add_part']) {
 		case 0:
 			echo "<h1> Add New Contact </h1>\n";
@@ -225,12 +223,21 @@ if(($_SESSION['mode'] == "Add") && ($_SERVER['REQUEST_METHOD'] == "GET")){
 			break;
 		default:
 	}
-} else if($_SESSION['mode'] == "Edit"){ 
-} else if($_SESSION['mode'] == "Delete"){ 
-} else if($_SESSION['mode'] == "View"){ 
-} else if($_SESSION['mode'] == "Display"){ 
+} else if($_SESSION['mode'] == "Edit"){
+		formEditContact();
+} else if($_SESSION['mode'] == "Delete"){
+} else if($_SESSION['mode'] == "View"){
+	if (isset($_POST['ct_b_back'])) {
+		$_SESSION['mode'] = "Display";
+		formContactDisplay();
+	} else {
+		$db_conn = dbconnect('localhost', 'week7', 'lamp1user', '!Lamp1!');
+		viewContact($db_conn);
+		dbdisconnect($db_conn);
+	}
+} else if($_SESSION['mode'] == "Display"){
 	formContactDisplay();
-} 
+}
 ?>
 	</body>
 </html>
@@ -252,6 +259,14 @@ function formContactDisplay(){
 		<h1> Contacts </h1>
 		<div>
 			<h2> Contacts </h2>
+			<?php
+				if (isset($_POST['ct_b_edit'])) {
+					echo "<h4 style='color:red'>Please select a contact to edit</h4>";
+				}
+				if (isset($_POST['ct_b_save'])) {
+					echo "<h4 style='color:blue'>Contact has been updated!</h4>";
+				}
+			?>
 		</div>
 		<div>
 		<form method="POST">
@@ -271,7 +286,7 @@ function formContactDisplay(){
 			<br>
 			<table>
 			<tr>
-				<td><input type="submit" name ="ct_b_view_details" value="View Details"></td>
+				<td><input type="submit" name ="ct_b_view" value="View Details"></td>
 				<td><input type="submit" name ="ct_b_edit" value="Edit"></td>
 				<td><input type="submit" name ="ct_b_delete" value="Delete"></td>
 			</tr>
